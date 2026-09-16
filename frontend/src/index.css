@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', 'system-ui', '-apple-system', sans-serif;
+  
+  /* Core Premium Animation Declarations */
+  --animate-fadeIn: fadeIn 0.2s ease-out forwards;
+  --animate-slideUp: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-slideLeft: slideLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { transform: translateY(16px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes slideLeft {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+}
+
+body {
+  background-color: var(--color-neutral-50);
+  color: var(--color-neutral-900);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}

@@ -1,0 +1,78 @@
+-- Enable UUID extension for secure, non-sequential IDs
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- 1. PRODUCTS TABLE
+CREATE TABLE products (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    price DECIMAL(12, 2) NOT NULL CHECK (price >= 0),
+    stock_quantity INT NOT NULL DEFAULT 0 CHECK (stock_quantity >= 0),
+    media_urls TEXT[] DEFAULT '{}', -- Array to hold image/video URLs for the carousel
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Indexing for fast product searches and sorting
+CREATE INDEX idx_products_created_at ON products(created_at DESC);
+
+-- 2. USERS TABLE (For Customers and Admin)
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    is_admin BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Indexing for fast login lookups
+CREATE INDEX idx_users_email ON users(email);
+
+-- 3. ORDERS TABLE
+CREATE TABLE orders (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    razorpay_order_id VARCHAR(255) UNIQUE,
+    razorpay_payment_id VARCHAR(255),
+    total_amount DECIMAL(12, 2) NOT NULL,
+    status VARCHAR(50) DEFAULT 'pending', -- pending, paid, failed, shipped
+    shipping_address TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_orders_user_id ON orders(user_id);
+CREATE INDEX idx_orders_razorpay_id ON orders(razorpay_order_id);
+
+-- 4. ORDER ITEMS TABLE (Normalization)
+CREATE TABLE order_items (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    order_id UUID REFERENCES orders(id) ON DELETE CASCADE,
+    product_id UUID REFERENCES products(id) ON DELETE RESTRICT,
+    quantity INT NOT NULL CHECK (quantity > 0),
+    price_at_purchase DECIMAL(12, 2) NOT NULL
+);
+
+CREATE INDEX idx_order_items_order_id ON order_items(order_id);
+
+
+ALTER TABLE orders 
+  ADD COLUMN customer_name VARCHAR(255),
+  ADD COLUMN phone_number VARCHAR(15),
+  ADD COLUMN pincode VARCHAR(10),
+  ADD COLUMN locality VARCHAR(255),
+  ADD COLUMN city_town VARCHAR(255),
+  ADD COLUMN state VARCHAR(100),
+  ADD COLUMN address_type VARCHAR(20) DEFAULT 'Home';
+  -- Alter the old column so it acts strictly as the Area and Street info
+  ALTER TABLE orders 
+  RENAME COLUMN shipping_address TO street_address;
+
+ALTER TABLE products ADD COLUMN category VARCHAR(100) DEFAULT 'Electronics';
+
+-- UPDATE users 
+-- SET is_admin = TRUE 
+-- WHERE email = 'friend@totemstore.com';
+
+---PASS:
+--- Toys@321
