@@ -62,7 +62,7 @@ export default function CartDrawer({ isOpen, onClose }) {
   const handleCheckout = async () => {
     try {
       // 1. Fire order payload to your Node backend query handler
-      const response = await fetch(`${API_BASE}/checkout/create-order', {
+      const response = await fetch(`${API_BASE}/checkout/create-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
