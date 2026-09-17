@@ -86,9 +86,9 @@ export default function CartDrawer({ isOpen, onClose }) {
         return;
       }
 
-      // 2. Process Sandbox Bypass condition directly
+     // 2. Process Sandbox Bypass condition directly
       if (orderData.isSandbox) {
-        alert(`[Sandbox Mode] Totemstore Purchase Successful!\nOrder registered instantly in PostgreSQL database.\nStock levels decremented automated.`);
+        alert("[Sandbox Mode] Totemstore Purchase Successful!\nOrder registered instantly in PostgreSQL database.\nStock levels decremented automated.");
         dispatch(totemApi.util.invalidateTags(['Product']));
         dispatch(clearCart());
         onClose();
