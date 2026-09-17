@@ -3,6 +3,8 @@ import { useDispatch } from 'react-redux';
 import { setCredentials } from '@/store/slices/authSlice';
 import { X, Lock, Mail, User } from 'lucide-react';
 
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
+
 export default function AuthModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
@@ -19,7 +21,7 @@ export default function AuthModal({ isOpen, onClose }) {
     const endpoint = isSignUp ? 'register' : 'login';
 
     try {
-      const response = await fetch(`http://localhost:5000/api/auth/${endpoint}`, {
+      const response = await fetch(`${API_BASE}/auth/${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),

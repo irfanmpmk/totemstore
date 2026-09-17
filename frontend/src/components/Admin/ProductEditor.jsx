@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useGetProductsQuery } from "@/store/services/totemApi";
 import { Edit3, Check, X } from "lucide-react";
 
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
+
 export default function ProductEditor() {
   const { data: response, refetch } = useGetProductsQuery();
   const products = response?.products || [];
@@ -47,7 +49,7 @@ export default function ProductEditor() {
     };
 
     try {
-      const response = await fetch(`http://localhost:5000/api/products/${id}`, {
+      const response = await fetch(`${API_BASE}/products/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

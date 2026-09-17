@@ -15,6 +15,9 @@ const INDIAN_STATES = [
   "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"
 ];
 
+
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
+
 export default function CartDrawer({ isOpen, onClose }) {
   if (!isOpen) return null;
 
@@ -59,7 +62,7 @@ export default function CartDrawer({ isOpen, onClose }) {
   const handleCheckout = async () => {
     try {
       // 1. Fire order payload to your Node backend query handler
-      const response = await fetch('http://localhost:5000/api/checkout/create-order', {
+      const response = await fetch(`${API_BASE}/checkout/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
